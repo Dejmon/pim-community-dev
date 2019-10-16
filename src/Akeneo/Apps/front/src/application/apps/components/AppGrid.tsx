@@ -2,22 +2,36 @@ import * as React from 'react';
 import {App as AppInterface} from '../../../domain/apps/app.interface';
 import {FlowType} from '../../../domain/apps/flow-type.enum';
 import {App} from './App';
+import {Section} from '../../common';
+import {Translate} from '../../shared/translate';
 
-export const AppGrid = () => {
-    // const { result, error } = useFetch('');
+interface Props {
+    apps: {[code: string]: AppInterface};
+}
 
-    const apps: {[code: string]: AppInterface} = {
-        AS_400: {code: 'AS_400', label: 'AS_400', flowType: FlowType.DATA_SOURCE},
-        MagentoConnector: {code: 'MagentoConnector', label: 'Magento Connector', flowType: FlowType.DATA_DESTINATION},
-        Google_Shopping: {code: 'Google_Shopping', label: 'Google Shopping', flowType: FlowType.DATA_DESTINATION},
-        Bynder: {code: 'Bynder', label: 'Bynder DAM', flowType: FlowType.OTHERS},
-    };
+export const AppGrid = ({ apps }: Props) => {
+    const dataSourceApps = Object.values(apps).filter(app => FlowType.DATA_SOURCE === app.flowType);
+    const dataDestinationApps = Object.values(apps).filter(app => FlowType.DATA_DESTINATION === app.flowType);
+    const otherApps = Object.values(apps).filter(app => FlowType.OTHER === app.flowType);
+
+    const renderApp = (app: AppInterface) => <App code={app.code} label={app.label} key={app.code} />;
 
     return (
         <>
-            {Object.values(apps).map(app => (
-                <App code={app.code} label={app.label} key={app.code} />
-            ))}
+            <Section>
+                <Translate id='pim_apps.flow_type.data_source' count={dataSourceApps.length} />
+            </Section>
+            {dataSourceApps.map(renderApp)}
+
+            <Section>
+                <Translate id='pim_apps.flow_type.data_destination' count={dataDestinationApps.length} />
+            </Section>
+            {dataDestinationApps.map(renderApp)}
+
+            <Section>
+                <Translate id='pim_apps.flow_type.other' count={otherApps.length} />
+            </Section>
+            {otherApps.map(renderApp)}
         </>
     );
 };
