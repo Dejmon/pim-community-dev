@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {create} from 'react-test-renderer';
-import {Button} from '../../../../../application/common/button/Button';
+import {Button} from '../../../../../application/common/components/button/Button';
 
 describe('Button component', () => {
     test('Matches the snapshot', () => {

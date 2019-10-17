@@ -176,6 +176,13 @@ const webpackConfig = {
         ],
       },
 
+      {
+        test: /\.(svg)$/,
+        use: [
+          'file-loader',
+        ],
+      },
+
       // Process the typescript loader files
       {
         test: /\.tsx?$/,

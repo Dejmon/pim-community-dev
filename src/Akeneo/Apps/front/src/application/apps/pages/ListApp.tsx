@@ -54,8 +54,9 @@ export const ListApp = () => {
                 <Helper.Title>
                     <Translate id='pim_apps.helper.title' />
                 </Helper.Title>
-                <Translate id='pim_apps.helper.description' />
-                <br />
+                <p>
+                    <Translate id='pim_apps.helper.description' />
+                </p>
                 <Helper.Link href='#'>
                     <Translate id='pim_apps.helper.link' />
                 </Helper.Link>
