@@ -4,15 +4,24 @@ import {FlowType} from '../../../domain/apps/flow-type.enum';
 import {App} from './App';
 import {Section} from '../../common';
 import {Translate} from '../../shared/translate';
+import styled from 'styled-components';
+
+const Grid = styled.div`
+    margin-top: 20px;
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+`;
 
 interface Props {
-    apps: {[code: string]: AppInterface};
+    apps: AppInterface[];
 }
 
-export const AppGrid = ({ apps }: Props) => {
-    const dataSourceApps = Object.values(apps).filter(app => FlowType.DATA_SOURCE === app.flowType);
-    const dataDestinationApps = Object.values(apps).filter(app => FlowType.DATA_DESTINATION === app.flowType);
-    const otherApps = Object.values(apps).filter(app => FlowType.OTHER === app.flowType);
+export const AppGrid = ({apps}: Props) => {
+    console.log(apps)
+    const dataSourceApps = apps.filter(app => FlowType.DATA_SOURCE === app.flowType);
+    const dataDestinationApps = apps.filter(app => FlowType.DATA_DESTINATION === app.flowType);
+    const otherApps = apps.filter(app => FlowType.OTHER === app.flowType);
 
     const renderApp = (app: AppInterface) => <App code={app.code} label={app.label} key={app.code} />;
 
@@ -21,17 +30,17 @@ export const AppGrid = ({ apps }: Props) => {
             <Section>
                 <Translate id='pim_apps.flow_type.data_source' count={dataSourceApps.length} />
             </Section>
-            {dataSourceApps.map(renderApp)}
+            <Grid>{dataSourceApps.map(renderApp)}</Grid>
 
             <Section>
                 <Translate id='pim_apps.flow_type.data_destination' count={dataDestinationApps.length} />
             </Section>
-            {dataDestinationApps.map(renderApp)}
+            <Grid>{dataDestinationApps.map(renderApp)}</Grid>
 
             <Section>
                 <Translate id='pim_apps.flow_type.other' count={otherApps.length} />
             </Section>
-            {otherApps.map(renderApp)}
+            <Grid>{otherApps.map(renderApp)}</Grid>
         </>
     );
 };

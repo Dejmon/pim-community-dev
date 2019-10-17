@@ -6,18 +6,25 @@ import {ApplyButton, Breadcrumb, BreadcrumbItem, Header, Page, Helper} from '../
 import {BreadcrumbRouterLink} from '../../shared/router';
 import {Translate} from '../../shared/translate';
 import {AppGrid} from '../components/AppGrid';
+import {useHistory} from 'react-router';
 
-const mockedFetch: {result?: {[code: string]: AppInterface}; error?: Error} = {
-    result: {
-        AS_400: {code: 'AS_400', label: 'AS_400', flowType: FlowType.DATA_SOURCE},
-        MagentoConnector: {code: 'MagentoConnector', label: 'Magento Connector', flowType: FlowType.DATA_DESTINATION},
-        Google_Shopping: {code: 'Google_Shopping', label: 'Google Shopping', flowType: FlowType.DATA_DESTINATION},
-        Bynder: {code: 'Bynder', label: 'Bynder DAM', flowType: FlowType.OTHER},
-    },
+const mockedFetch: {result?: AppInterface[]; error?: Error} = {
+    result: [
+        {code: 'AS_400', label: 'AS_400', flowType: FlowType.DATA_SOURCE},
+        {code: 'MagentoConnector', label: 'Magento Connector', flowType: FlowType.DATA_DESTINATION},
+        ...Array.from(Array(10).keys()).map(i => ({
+            code: `Google_Shopping_${i}`,
+            label: `Google Shopping ${i}`,
+            flowType: FlowType.DATA_DESTINATION,
+        })),
+        {code: 'Bynder', label: 'Bynder DAM', flowType: FlowType.OTHER},
+    ],
     error: undefined,
 };
 
 export const ListApp = () => {
+    const history = useHistory();
+
     const breadcrumb = (
         <Breadcrumb>
             <BreadcrumbRouterLink route={'oro_config_configuration_system'}>
@@ -37,7 +44,7 @@ export const ListApp = () => {
     );
 
     const createButton = (
-        <ApplyButton onClick={() => console.log('CREATE')} classNames={['AknButtonList-item']}>
+        <ApplyButton onClick={() => history.push('/apps/create')} classNames={['AknButtonList-item']}>
             <Translate id='pim_common.create' />
         </ApplyButton>
     );
