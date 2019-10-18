@@ -165,23 +165,19 @@ expect.extend({
       const filterSelector = `.filter-item[data-name="${filterName}"]`
       const filter = await page.$(filterSelector);
 
-      await page.evaluate((filterSelector) => {
-        return $(`${filterSelector} .AknFilterBox-filterLabel`).focus().trigger('click')
-      }, filterSelector)
-
+      await page.evaluate((selector) => $(`${selector}`).focus().click(), filterSelector)
       await (await filter.$('.AknFilterBox-filter')).click();
 
-      console.log('before criteria')
+      console.log('after click filter', filterSelector)
       const filterCriteriaIsVisible = await page.waitForFunction(({filterSelector}) => {
-        return $(`${filterSelector} .filter-criteria`).is(':visible')
-      }, { timeout: 500 }, { filterSelector });
+        return $(`${filterSelector} .operator`).is(':visible')
+      }, {timeout: 500}, {filterSelector});
 
-      console.log('after criteria', await filterCriteriaIsVisible.jsonValue());
+      console.log('is filter box visible?', await filterCriteriaIsVisible.jsonValue());
 
       await (await filter.$('.operator')).click();
       await (await getOperatorChoiceByLabel(filter, operator)).click();
 
-      // assert that the choice has been selected
       const isOperatorDropdownClosed = await page.waitForFunction(({filterSelector}) => {
         return $(`${filterSelector} .operator .AknDropdown-menu`).css('opacity') === '0'
       }, {timeout: 600}, {filterSelector});
