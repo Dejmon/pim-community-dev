@@ -164,25 +164,46 @@ expect.extend({
     try {
       const filterSelector = `.filter-item[data-name="${filterName}"]`
       const filter = await page.$(filterSelector);
+
+      await page.evaluate((filterSelector) => {
+        return $(`${filterSelector} .AknFilterBox-filterLabel`).focus().trigger('click')
+      }, filterSelector)
+
       await (await filter.$('.AknFilterBox-filter')).click();
 
-      await page.waitForSelector(`${filterSelector} .filter-criteria`, {
-        visible: true,
-        timeout: 500
-      })
+      console.log('before criteria')
+      const filterCriteriaIsVisible = await page.waitForFunction(({filterSelector}) => {
+        return $(`${filterSelector} .filter-criteria`).is(':visible')
+      }, { timeout: 500 }, { filterSelector });
+
+      console.log('after criteria', await filterCriteriaIsVisible.jsonValue());
 
       await (await filter.$('.operator')).click();
       await (await getOperatorChoiceByLabel(filter, operator)).click();
-      await page.waitFor(500);
-      await (await filter.$('.filter-update')).click();
-      await page.waitFor(500);
+
+      // assert that the choice has been selected
+      const isOperatorDropdownClosed = await page.waitForFunction(({filterSelector}) => {
+        return $(`${filterSelector} .operator .AknDropdown-menu`).css('opacity') === '0'
+      }, {timeout: 600}, {filterSelector});
+
+      console.log('is dropdown hidden?', await isOperatorDropdownClosed.jsonValue())
+
+      await page.evaluate((filterSelector) => {
+        $(`${filterSelector} .filter-update`).focus().trigger('click');
+      }, filterSelector)
+
+      const isFilterClosed = await page.waitForFunction(({filterSelector}) => {
+        return $(`${filterSelector} .filter-criteria`).is(':hidden')
+      }, { timeout: 1000 }, {filterSelector});
+
+      console.log('isFilterClosed', await isFilterClosed.jsonValue())
 
       return {
         pass: true,
         message: () => `Can't filter "${filterName}" by "${operator}"`
       }
     } catch (e) {
-      console.log(e.message)
+      console.log(e)
       return {
         pass: false,
         message: () => `Couldn't open filter "${filterName}"`
